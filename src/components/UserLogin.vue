@@ -122,6 +122,7 @@ const handleSignup = async () => {
       });
       console.log("SignIn success");
       // 登入成功的邏輯，比如路由跳轉
+      activeTab.value = 'signin';
     } catch (error) {
       // 處理註冊錯誤
       console.error('SignIn error:', error);
