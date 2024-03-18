@@ -100,7 +100,7 @@ const handleLogin = async () => {
   const valid = await loginFormRef.value.validate();
   if (valid) {
     try {
-      await userStore.login({ userId: loginForm.value.username, pwd: loginForm.value.password });
+      await userStore.login({ username: loginForm.value.username, password: loginForm.value.password });
       // 登入成功的邏輯，比如路由跳轉
     } catch (error) {
       // 處理登入錯誤
@@ -109,15 +109,25 @@ const handleLogin = async () => {
   }
 };
 
-const handleSignup = () => {
-  signupFormRef.value.validate((valid) => {
-    if (valid) {
-      // Signup logic
-      console.log('Signup successful');
-    } else {
-      console.log('Error on form submission');
+const handleSignup = async () => {
+  const valid = await signupFormRef.value.validate();
+  if (valid) {
+    try {
+      //console.log("signupFormRef.value.username", signupFormRef.value.username);
+      await userStore.signUp({ 
+        username: signupForm.value.username, 
+        email: signupForm.value.email,
+        password: signupForm.value.password,  
+        confirmPassword: signupForm.value.confirmPassword,
+      });
+      console.log("SignIn success");
+      // 登入成功的邏輯，比如路由跳轉
+    } catch (error) {
+      // 處理註冊錯誤
+      console.error('SignIn error:', error);
     }
-  });
+  }
+
 };
 
 // Submit handlers

@@ -10,11 +10,11 @@ export const useUserStore = defineStore({
     userData: null
   }),
   actions: {
-    async login(params: { userId: string; pwd: string }) {
+    async login(params: { username: string; password: string }) {
       try {
         // 替換為實際的登入 API 端點
-        console.log("params.userId", params.userId);
-        const response = await axios.post('/api/login', { userId: params.userId, pwd: params.pwd });
+        console.log("params.userId", params.username);
+        const response = await axios.post('http://localhost:3000/api/auth/login', { username: params.username, password: params.password });
 
         // 假設 API 響應中包含了 token 和用戶資料
         if (response.data && response.data.token) {
@@ -33,6 +33,28 @@ export const useUserStore = defineStore({
         this.isLoggedIn = false;
         this.userToken = null;
         this.userData = null;
+        throw error;
+      }
+    },
+    async signUp(params: { username: string; email: string; password: string , confirmPassword: string}) {
+      try {
+        console.log("params", params);
+        const response = await axios.post('http://localhost:3000/api/auth/signup', { username: params.username, email: params.email, password: params.password, confirmPassword: params.confirmPassword });
+
+        // 假設註冊成功 API 會回傳 token 和用戶資料
+        if (response.data && response.data.token) {
+          this.isLoggedIn = true;
+          this.userToken = response.data.token;
+          this.userData = response.data.user;
+          
+          // 可選操作：將 token 存儲到 localStorage
+          localStorage.setItem('userToken', response.data.token);
+        } else {
+          // 處理註冊失敗
+          throw new Error('Sign up failed');
+        }
+      } catch (error) {
+        // 註冊過程中出錯，可以在這裡處理錯誤
         throw error;
       }
     },
