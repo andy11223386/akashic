@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <UserLogin />
+    <router-view />
   </div>
 </template>
 
 <script>
-import UserLogin from './components/UserLogin.vue';
+import UserLogin from './views/UserLogin.vue';
 
 export default {
   name: 'App',
   components: {
-    UserLogin
+    UserLogin,
   }
 };
 </script>

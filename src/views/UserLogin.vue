@@ -45,6 +45,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
+import { useRouter } from 'vue-router';
 import { ElCard, ElTabs, ElTabPane, ElForm, ElFormItem, ElInput, ElCheckbox, ElButton } from 'element-plus';
 
 
@@ -53,6 +54,9 @@ const activeTab = ref('signin');
 const loginFormRef = ref(null);
 const signupFormRef = ref(null);
 const userStore = useUserStore(); // 使用 user store
+// 獲取路由實例
+const router = useRouter();
+
 
 // Form models
 const loginForm = ref({ username: '', password: '', rememberMe: false });
@@ -102,6 +106,9 @@ const handleLogin = async () => {
     try {
       await userStore.login({ username: loginForm.value.username, password: loginForm.value.password });
       // 登入成功的邏輯，比如路由跳轉
+
+      console.log("login");
+      router.push({ name: 'Home' });
     } catch (error) {
       // 處理登入錯誤
       console.error('Login error:', error);
