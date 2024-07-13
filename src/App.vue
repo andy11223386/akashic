@@ -16,5 +16,5 @@ export default {
 </script>
 
 <style>
-/* 你的 App 樣式 */
+@import './index.css';
 </style>
