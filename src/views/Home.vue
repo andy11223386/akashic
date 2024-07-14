@@ -53,6 +53,9 @@
     <!-- Main Content -->
     <main class="w-3/5 border-x border-gray-700 overflow-y-auto">
       <div class="sticky top-0 z-10 bg-gray-900 bg-opacity-25 backdrop-filter backdrop-blur-lg">
+        <div class="flex justify-between items-center px-4 py-2 border-b border-gray-700">
+          <h1 class="text-2xl font-bold">Home</h1>
+        </div>
         <div class="flex justify-around py-2 border-b border-gray-700">
           <button class="text-white font-semibold border-b-2 border-blue-500 pb-2">For you</button>
           <button class="text-gray-500 pb-2">Following</button>
@@ -60,7 +63,11 @@
       </div>
       <div class="p-4">
         <div class="mb-4 p-4 border border-gray-700 rounded-lg">
-          <textarea placeholder="What is happening?!" class="w-full p-2 bg-gray-800 border-none rounded-lg text-white"></textarea>
+          <textarea
+            v-model="newTweetContent"
+            placeholder="What is happening?!"
+            class="w-full p-2 bg-gray-800 border-none rounded-lg text-white"
+          ></textarea>
           <div class="flex justify-between items-center mt-2">
             <div class="flex space-x-2">
               <MdiImage />
@@ -70,10 +77,12 @@
               <MdiClock />
               <MdiMapMarker />
             </div>
-            <button class="px-4 py-2 bg-blue-500 rounded-full">Post</button>
+            <button @click="postTweet" class="px-4 py-2 bg-blue-500 rounded-full">Post</button>
           </div>
         </div>
-        <Tweet v-for="tweet in tweets" :key="tweet.id" :tweet="tweet" />
+        <transition-group name="fade" tag="div">
+          <Tweet v-for="tweet in tweets" :key="tweet.id" :tweet="tweet" />
+        </transition-group>
       </div>
     </main>
 
@@ -100,9 +109,10 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import Tweet from '../components/Tweet.vue'
+import {IAddTweetParams, ITweet} from '../types/services/post'
 
 import MdiHome from 'vue-material-design-icons/Home.vue'
 import MdiMagnify from 'vue-material-design-icons/Magnify.vue'
@@ -121,20 +131,19 @@ import MdiTarget from 'vue-material-design-icons/Target.vue'
 import MdiClock from 'vue-material-design-icons/Clock.vue'
 import MdiMapMarker from 'vue-material-design-icons/MapMarker.vue'
 
-const tweets = ref([])
+import {usePostStore} from '../stores/post'
+
+const tweets = ref<Array<ITweet>>([])
 const trends = ref([])
+const newTweetContent = ref('')
+
+const postStore = usePostStore()
 
 onMounted(() => {
-  fetchTweets()
+  //fetchTweets()
   fetchTrends()
 })
 
-function fetchTweets() {
-  tweets.value = [
-    { id: 1, username: 'John Doe', handle: '@johndoe', avatar: 'https://via.placeholder.com/50', content: 'This is a tweet content.', image: 'https://via.placeholder.com/600', comments: 430, retweets: 11000, likes: 155000, views: 2900000 },
-    { id: 2, username: 'Jane Smith', handle: '@janesmith', avatar: 'https://via.placeholder.com/50', content: 'This is another tweet content.', comments: 300, retweets: 9500, likes: 140000, views: 2600000 },
-  ]
-}
 
 function fetchTrends() {
   trends.value = [
@@ -146,11 +155,63 @@ function fetchTrends() {
     { id: 6, topic: '#zzzero', tweets: '235K' },
   ]
 }
+
+async function postTweet() {
+  if (newTweetContent.value.trim() !== '') {
+    // let imageUrl = ''
+    // if (newTweetImage.value) {
+    //   imageUrl = await uploadImageToImgur(newTweetImage.value)
+    // }
+
+    const newTweet: IAddTweetParams = {
+      createdAt: Date.now().toString(),
+      username: 'Akashic',
+      userId: '@Akashic2046',
+      profilePicture: 'https://via.placeholder.com/50',
+      content: newTweetContent.value,
+      comments: 0,
+      retweets: 0,
+      likes: 0,
+      views: 0,
+    }
+
+    // Send newTweet to the backend
+    const res = await postStore.doAddTweet(newTweet)
+    console.log('res', res)
+    if (res) {
+      tweets.value.unshift(res.data)
+      newTweetContent.value = ''
+    } else {
+      console.error('Failed to post tweet:', res.message)
+    }
+  }
+}
+
+
+async function getAllTweet() {
+  const res = await postStore.fetchAllTweet()
+  console.log('res.data', res.data)
+  if(!res) return
+  tweets.value = res.data || []
+  
+  console.log('tweets.value', tweets.value)
+  console.log('tweets.value[0]', tweets.value)
+
+
+}
+
+getAllTweet()
 </script>
 
 <style scoped>
 .container {
   max-width: 1200px;
   margin: auto;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
 }
 </style>
