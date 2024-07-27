@@ -3,8 +3,8 @@
     <div class="flex items-center mb-2">
       <el-avatar :src="tweet.profilePicture" class="w-10 h-10 rounded-full mr-2"></el-avatar>
       <div>
-        <h2 class="text-xl font-semibold">{{ tweet.username }}</h2>
-        <p class="text-gray-500">{{ tweet.userId }}</p>
+        <h2 class="text-xl font-semibold">{{ tweet.nickname || tweet.username }}</h2>
+        <p class="text-gray-500">{{ tweet.username }}</p>
       </div>
     </div>
     <p v-html="formattedContent"></p>

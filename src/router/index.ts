@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import UserLogin from '../views/UserLogin.vue';
-import { useUserStore } from '../stores/user'; // 導入您的用戶 store
+import Profile from '../views/Profile.vue';
+import { useUserStore } from '../stores/user';
 
 const routes = [
   {
@@ -9,7 +10,7 @@ const routes = [
     name: 'Home',
     component: Home,
     meta: {
-      requiresAuth: true, // 表示需要登入才能訪問
+      requiresAuth: true,
     },
   },
   {
@@ -17,7 +18,14 @@ const routes = [
     name: 'Login',
     component: UserLogin,
   },
-  // 其他路由...
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile,
+    meta: {
+      requiresAuth: true,
+    },
+  },
 ];
 
 const router = createRouter({
@@ -25,10 +33,15 @@ const router = createRouter({
   routes,
 });
 
-// 添加導航守衛
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
-  if (to.meta.requiresAuth && !userStore.isLoggedIn) {
+  const userToken = localStorage.getItem('userToken')
+
+  console.log("to.meta.requiresAuth", to.meta.requiresAuth)
+  console.log("userToken", userToken)
+
+
+  if (to.meta.requiresAuth && !userToken) {
     next({ name: 'Login' });
   } else {
     next();
