@@ -42,10 +42,10 @@
       <div class="px-4 py-4">
         <transition name="fade" tag="div">
           <div v-if="selectedTab === 'Posts'" key="posts">
-            <Tweet v-for="tweet in tweets" :key="tweet.id" :tweet="tweet" />
+            <Tweet v-for="tweet in tweets" :key="tweet._id" :tweet="tweet" />
           </div>
           <div v-else-if="selectedTab === 'Replies'" key="replies">
-            <Tweet v-for="tweet in tweets" :key="tweet.id" :tweet="tweet" />
+            <Tweet v-for="tweet in tweets" :key="tweet._id" :tweet="tweet" />
           </div>
           <div v-else-if="selectedTab === 'Highlights'" key="highlights">
 
@@ -62,7 +62,7 @@
         </transition>
       </div>
     </div>
-    <EditProfileDialog v-if="showEditDialog" :profile="profile" @close="closeEditDialog" />
+    <EditProfileDialog v-if="showEditDialog" :profil="profile" @close="closeEditDialog" />
   </main>
 </template>
 

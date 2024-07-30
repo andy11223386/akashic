@@ -30,7 +30,7 @@
           </div>
         </div>
         <transition-group name="fade" tag="div">
-          <Tweet v-for="tweet in tweets" :key="tweet.id" :tweet="tweet" />
+          <Tweet v-for="tweet in tweets" :key="tweet._id" :tweet="tweet" />
         </transition-group>
       </div>
     </main>
@@ -77,7 +77,7 @@
       const newTweet: IAddTweetParams = {
         createdAt: Date.now().toString(),
         username: username,
-        profilePicture: 'https://via.placeholder.com/50',
+        profilePicture: 'https://pbs.twimg.com/profile_images/1769013911205081088/6KYJIWKf_x96.jpg',
         content: newTweetContent.value,
         comments: 0,
         retweets: 0,

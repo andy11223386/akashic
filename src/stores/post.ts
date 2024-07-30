@@ -1,5 +1,5 @@
-import { IAddTweetParams, IGetMyTweetParams } from '@/types/services/post'
-import { addTweet, getAllTweet, getMyTweet}from '@/services/post'
+import { IAddTweetParams, IGetMyTweetParams, IAddCommentParams } from '@/types/services/post'
+import { addTweet, getAllTweet, getMyTweet, addComment}from '@/services/post'
 import { defineStore } from 'pinia'
 
 export const usePostStore = defineStore('post', {
@@ -37,6 +37,15 @@ export const usePostStore = defineStore('post', {
         //return response
         const usernsme = localStorage.getItem('username') as string
         const res = await getMyTweet({username: usernsme})
+        console.log('res', res)
+        return res
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async doAddComment(params: IAddCommentParams) {
+      try {
+        const res = await addComment(params)
         console.log('res', res)
         return res
       } catch (error) {

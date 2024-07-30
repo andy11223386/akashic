@@ -5,6 +5,8 @@ import {
     IGetAllTweetRes,
     IGetMyTweetParams,
     IGetMyTweetRes,
+    IAddCommentParams,
+    IAddCommentRes,
 } from '../types/services/post'
 
 const BASE_ROUTE = 'api/post'
@@ -22,3 +24,7 @@ async (): Promise<IGetAllTweetRes> =>
 export const getMyTweet =
 async (params: IGetMyTweetParams): Promise<IGetMyTweetRes> =>
   await api.post(`${BASE_ROUTE}/getTweets/${params.username}`)
+
+export const addComment =
+async (params: IAddCommentParams): Promise<IAddCommentRes> =>
+  await api.post(`api/comment/createComment`, params)

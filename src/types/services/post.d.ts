@@ -11,14 +11,26 @@ export declare interface IAddTweetParams {
     views: number;
 }
 
+export declare interface IAddCommentParams {
+    replyPostId: string;
+    replyTo: string;
+    createdAt: string;
+    username: string;
+    content: string;
+    comments: number;
+    retweets: number;
+    likes: number;
+    views: number;
+}
+
 export declare interface ITweet {
-    id: string;
+    _id: string;
     createdAt: string;
     username: string;
     nickname: string;
     profilePicture: string;
     content: string;
-    comments: number;
+    comments: string[];
     retweets: number;
     likes: number;
     views: number;
@@ -40,4 +52,7 @@ export declare interface  IAddTweetRes extends IBaseRes<ITweet>{
 
 }
 
+export declare interface IAddCommentRes extends IBaseRes<void> {
+
+}
 
