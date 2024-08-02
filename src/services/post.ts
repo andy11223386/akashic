@@ -7,6 +7,10 @@ import {
     IGetMyTweetRes,
     IAddCommentParams,
     IAddCommentRes,
+    ILikeTweetParams,
+    ILikeTweetRes,
+    IGetTweetParams,
+    IGetTweetRes,
 } from '../types/services/post'
 
 const BASE_ROUTE = 'api/post'
@@ -20,6 +24,9 @@ export const getAllTweet =
 async (): Promise<IGetAllTweetRes> =>
   await api.post(`${BASE_ROUTE}/getAllTweets`)
 
+export const getTweet =
+async (params: IGetTweetParams): Promise<IGetTweetRes> =>
+  await api.post(`${BASE_ROUTE}/getTweet/${params.postId}`)
 
 export const getMyTweet =
 async (params: IGetMyTweetParams): Promise<IGetMyTweetRes> =>
@@ -28,3 +35,7 @@ async (params: IGetMyTweetParams): Promise<IGetMyTweetRes> =>
 export const addComment =
 async (params: IAddCommentParams): Promise<IAddCommentRes> =>
   await api.post(`api/comment/createComment`, params)
+
+export const likeTweet =
+async (params: ILikeTweetParams): Promise<ILikeTweetRes> =>
+  await api.post(`${BASE_ROUTE}/like`, params)

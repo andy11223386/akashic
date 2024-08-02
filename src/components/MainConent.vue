@@ -1,117 +1,160 @@
 <template>
-    <main class="w-3/5 border-x border-gray-700 overflow-y-auto custom-scrollbar">
-      <div class="sticky top-0 z-10 bg-black bg-opacity-25 backdrop-filter backdrop-blur-lg">
-        <div class="flex justify-between items-center px-4 py-2 border-b border-gray-700">
-          <h1 class="text-2xl font-bold">Home</h1>
-        </div>
-        <div class="flex justify-around py-2 border-b border-gray-700">
-          <button class="text-white font-semibold border-b-2 border-blue-500 pb-2">For you</button>
-          <button class="text-gray-500 pb-2">Following</button>
-        </div>
+  <main class="w-3/5 border-x border-gray-700 overflow-y-auto custom-scrollbar">
+    <div class="sticky top-0 z-10 bg-black bg-opacity-25 backdrop-filter backdrop-blur-lg">
+      <div class="flex justify-between items-center px-4 py-2 border-b border-gray-700">
+        <h1 class="text-2xl font-bold">Home</h1>
       </div>
-      <div class="p-4">
-        <div class="mb-4 p-4 border border-gray-700 rounded-lg">
-          <textarea
-            v-model="newTweetContent"
-            placeholder="What is happening?!"
-            class="w-full p-2 bg-black border-none rounded-lg text-white resize-none transparent-border"
-            @input="handleInput"
-          ></textarea>
-          <div class="flex justify-between items-center mt-2">
-            <div class="flex space-x-2">
-              <MdiImage />
-              <MdiVideo />
-              <MdiPoll />
-              <MdiTarget />
-              <MdiClock />
-              <MdiMapMarker />
+      <div class="flex justify-around py-2 border-b border-gray-700">
+        <button class="text-white font-semibold border-b-2 border-blue-500 pb-2">For you</button>
+        <button class="text-gray-500 pb-2">Following</button>
+      </div>
+    </div>
+    <div class="p-4">
+      <div class="mb-4 p-4 border border-gray-700 rounded-lg">
+        <textarea
+          v-model="newTweetContent"
+          placeholder="What is happening?!"
+          class="w-full p-2 bg-black border-none rounded-lg text-white resize-none transparent-border"
+          @input="handleInput"
+        ></textarea>
+        <img v-if="imageUrl" :src="imageUrl" alt="Uploaded Image" class="uploaded-image">
+        <div class="flex justify-between items-center mt-2">
+          <div class="flex space-x-2">
+            <div class="icon-wrapper">
+              <MdiImage @click="selectImage" />
             </div>
-            <button @click="postTweet" class="px-4 py-2 bg-blue-500 rounded-full">Post</button>
+            <MdiVideo />
+            <MdiPoll />
+            <MdiTarget />
+            <MdiClock />
+            <MdiMapMarker />
           </div>
+          <button @click="postTweet" class="px-4 py-2 bg-blue-500 rounded-full">Post</button>
         </div>
-        <transition-group name="fade" tag="div">
-          <Tweet v-for="tweet in tweets" :key="tweet._id" :tweet="tweet" />
-        </transition-group>
       </div>
-    </main>
-  </template>
-  
-  <script setup lang="ts">
-  import { ref, onMounted } from 'vue'
-  import Tweet from '../components/Tweet.vue'
-  import { IAddTweetParams, ITweet } from '../types/services/post'
-  
-  import MdiImage from 'vue-material-design-icons/Image.vue'
-  import MdiVideo from 'vue-material-design-icons/Video.vue'
-  import MdiPoll from 'vue-material-design-icons/Poll.vue'
-  import MdiTarget from 'vue-material-design-icons/Target.vue'
-  import MdiClock from 'vue-material-design-icons/Clock.vue'
-  import MdiMapMarker from 'vue-material-design-icons/MapMarker.vue'
-  
-  import { usePostStore } from '../stores/post'
-  import { useUserStore } from '../stores/user'
-  
-  const tweets = ref<Array<ITweet>>([])
-  const newTweetContent = ref('')
-  
-  const postStore = usePostStore()
-  const userStore = useUserStore()
-  
-  onMounted(() => {
-    fetchTweets()
-  })
+      <transition-group name="fade" tag="div">
+        <Tweet v-for="tweet in tweets" :key="tweet._id" :tweet="tweet" />
+      </transition-group>
+    </div>
+  </main>
+</template>
 
-  async function fetchTweets() {
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import Tweet from '../components/Tweet.vue'
+import { IAddTweetParams, ITweet } from '../types/services/post'
+
+import MdiImage from 'vue-material-design-icons/Image.vue'
+import MdiVideo from 'vue-material-design-icons/Video.vue'
+import MdiPoll from 'vue-material-design-icons/Poll.vue'
+import MdiTarget from 'vue-material-design-icons/Target.vue'
+import MdiClock from 'vue-material-design-icons/Clock.vue'
+import MdiMapMarker from 'vue-material-design-icons/MapMarker.vue'
+
+import { usePostStore } from '../stores/post'
+import { useUserStore } from '../stores/user'
+
+const tweets = ref<Array<ITweet>>([])
+const newTweetContent = ref('')
+const imageUrl = ref('')
+
+const postStore = usePostStore()
+const userStore = useUserStore()
+
+onMounted(() => {
+  fetchTweets()
+})
+
+async function fetchTweets() {
   const res = await postStore.fetchAllTweet()
-  console.log('res.data', res.data)
   if (!res) return
   tweets.value = res.data || []
-  
-  console.log('tweets.value', tweets.value)
-  console.log('tweets.value[0]', tweets.value)
+}
+
+async function postTweet() {
+  if (newTweetContent.value.trim() !== '') {
+    const username = localStorage.getItem('username')
+    const newTweet: IAddTweetParams = {
+      createdAt: Date.now().toString(),
+      username: username,
+      content: newTweetContent.value,
+      comments: 0,
+      retweets: 0,
+      likes: [],
+      views: 0,
+      imageUrl: imageUrl.value, // Include image URL if available
+    }
+
+    const res = await postStore.doAddTweet(newTweet)
+    if (res) {
+      tweets.value.unshift(res.data)
+      newTweetContent.value = ''
+      imageUrl.value = ''
+      const textarea = document.querySelector('textarea')!;
+      textarea.value = ''; // Reset the content
+      adjustTextareaHeight(textarea);
+    } else {
+      console.error('Failed to post tweet:', res.message)
+    }
   }
-  
-  async function postTweet() {
-    if (newTweetContent.value.trim() !== '') {
-      const username = localStorage.getItem('username')
-      const newTweet: IAddTweetParams = {
-        createdAt: Date.now().toString(),
-        username: username,
-        profilePicture: 'https://pbs.twimg.com/profile_images/1769013911205081088/6KYJIWKf_x96.jpg',
-        content: newTweetContent.value,
-        comments: 0,
-        retweets: 0,
-        likes: 0,
-        views: 0,
-      }
-  
-      // Send newTweet to the backend
-      const res = await postStore.doAddTweet(newTweet)
-      if (res) {
-        tweets.value.unshift(res.data)
-        newTweetContent.value = ''
-        const textarea = document.querySelector('textarea')!;
-        textarea.value = ''; // Reset the content
-        adjustTextareaHeight(textarea);
-      } else {
-        console.error('Failed to post tweet:', res.message)
+}
+
+function handleInput(event: Event) {
+  const textarea = event.target as HTMLTextAreaElement
+  adjustTextareaHeight(textarea)
+}
+
+function adjustTextareaHeight(textarea: HTMLTextAreaElement) {
+  textarea.style.height = 'auto'
+  textarea.style.height = textarea.scrollHeight + 'px'
+}
+
+function selectImage() {
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = 'image/*'
+  input.onchange = async (event) => {
+    const file = (event.target as HTMLInputElement).files?.[0]
+    if (file) {
+      const imageUrlFromImgur = await uploadImageToImgur(file)
+      if (imageUrlFromImgur) {
+        imageUrl.value = imageUrlFromImgur
       }
     }
   }
-  
-  function handleInput(event: Event) {
-    const textarea = event.target as HTMLTextAreaElement
-    adjustTextareaHeight(textarea)
+  input.click()
+}
+
+async function uploadImageToImgur(file: File): Promise<string | null> {
+  const clientId = 'YOUR_IMGUR_CLIENT_ID' // Replace with your Imgur client ID
+  const formData = new FormData()
+  formData.append('image', file)
+
+  try {
+    const response = await fetch('https://api.imgur.com/3/image', {
+      method: 'POST',
+      headers: {
+        Authorization: `Client-ID ${clientId}`,
+      },
+      body: formData,
+    })
+
+    const data = await response.json()
+    if (data.success) {
+      return data.data.link
+    } else {
+      console.error('Imgur upload failed:', data)
+      return null
+    }
+  } catch (error) {
+    console.error('Imgur upload error:', error)
+    return null
   }
-  
-  function adjustTextareaHeight(textarea: HTMLTextAreaElement) {
-    textarea.style.height = 'auto'
-    textarea.style.height = textarea.scrollHeight + 'px'
-  }
-  </script>
-  
-  <style scoped>
-  .container {
+}
+</script>
+
+<style scoped>
+.container {
   max-width: 1200px;
   margin: auto;
 }
@@ -158,5 +201,21 @@ textarea {
   top: 0;
   z-index: 10;
 }
-  </style>
-  
+
+.uploaded-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+/* Icon hover and pressed effects */
+.icon-wrapper:hover {
+  color: #1da1f2;
+}
+
+.icon-wrapper:active {
+  color: #0a84d0;
+  transform: scale(0.95);
+}
+</style>

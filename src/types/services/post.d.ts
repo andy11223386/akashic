@@ -3,12 +3,12 @@ import { IBaseRes } from ".";
 export declare interface IAddTweetParams {
     createdAt: string;
     username: string;
-    profilePicture: string;
     content: string;
     comments: number;
     retweets: number;
-    likes: number;
+    likes: string[];
     views: number;
+    imageUrl:string;
 }
 
 export declare interface IAddCommentParams {
@@ -19,8 +19,13 @@ export declare interface IAddCommentParams {
     content: string;
     comments: number;
     retweets: number;
-    likes: number;
+    likes: string[];
     views: number;
+}
+
+export declare interface ILikeTweetParams {
+    postId: string;
+    username: string;
 }
 
 export declare interface ITweet {
@@ -32,12 +37,16 @@ export declare interface ITweet {
     content: string;
     comments: string[];
     retweets: number;
-    likes: number;
+    likes: string[];
     views: number;
 }
 
 export interface IGetMyTweetParams {
     username: string;
+}
+
+export interface IGetTweetParams {
+    postId: string;
 }
 
 export declare interface IGetMyTweetRes extends IBaseRes<ITweet[]> {
@@ -56,3 +65,10 @@ export declare interface IAddCommentRes extends IBaseRes<void> {
 
 }
 
+export declare interface ILikeTweetRes extends IBaseRes<void> {
+
+}
+
+export declare interface IGetTweetRes extends IBaseRes<ITweet> {
+
+}

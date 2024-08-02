@@ -1,14 +1,14 @@
 <template>
   <div class="tweet-container">
     <div class="tweet-header">
-      <img :src="tweet.profilePicture" class="avatar" />
+      <img :src="tweetData.profilePicture" class="avatar" />
       <div>
-        <h2 class="username">{{ tweet.nickname || tweet.username }}</h2>
-        <p class="handle">{{ tweet.username }}</p>
+        <h2 class="username">{{ tweetData.nickname || tweetData.username }}</h2>
+        <p class="handle">{{ tweetData.username }}</p>
       </div>
     </div>
     <p class="tweet-content" v-html="formattedContent"></p>
-    <img v-if="tweet.image" :src="tweet.image" alt="Tweet Image" class="tweet-image" />
+    <img v-if="tweetData.imageUrl" :src="tweetData.imageUrl" alt="Tweet Image" class="tweet-image" />
     <div class="tweet-footer">
       <button @click="openReplyDialog" class="icon-button">
         <MdiReply class="icon" />
@@ -16,46 +16,46 @@
       </button>
       <button class="icon-button">
         <MdiRepeat class="icon" />
-        <span>{{ tweet.retweets }}</span>
+        <span>{{ tweetData.retweets }}</span>
       </button>
       <button @click="openCommentDialog" class="icon-button">
         <MdiComment class="icon" />
-        <span>{{ tweet.comments.length }}</span>
+        <span>{{ tweetData.comments.length }}</span>
       </button>
-      <button class="icon-button">
+      <button @click="doLikeTweet" class="icon-button" :class="{'liked': isLiked}">
         <MdiHeart class="icon" />
-        <span>{{ tweet.likes }}</span>
+        <span>{{ tweetData.likes.length }}</span>
       </button>
     </div>
 
-    <!-- 使用 ReplyDialog 组件 -->
     <ReplyDialog
       :visible.sync="visible"
-      :tweet="tweet"
+      :tweet="tweetData"
       @reply="handleReply"
       @close="closeDialog"
     />
 
     <CommentDialog
       :commentDialogVisible.sync="commentDialogVisible"
-      :tweet="tweet"
-      :comments="tweet.comments"
-       @close="closeCommentDialog"
+      :tweet="tweetData"
+      :comments="tweetData.comments"
+      @reply="handleReply"
+      @close="closeCommentDialog"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, computed } from 'vue'
+import { ref, reactive, defineProps, computed, watch } from 'vue'
 import MdiComment from 'vue-material-design-icons/Comment.vue'
 import MdiReply from 'vue-material-design-icons/Reply.vue'
 import MdiRepeat from 'vue-material-design-icons/Repeat.vue'
 import MdiHeart from 'vue-material-design-icons/Heart.vue'
-import MdiChartBar from 'vue-material-design-icons/ChartBar.vue'
 import ReplyDialog from './ReplyDialog.vue'
 import CommentDialog from './CommentDialog.vue'
-import { IAddCommentParams } from '../types/services/post'
+import { IAddCommentParams, IGetTweetParams, ILikeTweetParams } from '../types/services/post'
 import { usePostStore } from '../stores/post'
+import { likeTweet } from '@/services/post'
 
 const postStore = usePostStore()
 
@@ -63,11 +63,20 @@ const props = defineProps({
   tweet: Object
 })
 
+// Reactive variable for tweet data
+const tweetData = reactive({ ...props.tweet })
+
 const visible = ref(false)
 const commentDialogVisible = ref(false)
 
 const formattedContent = computed(() => {
-  return props.tweet.content.replace(/\n/g, '<br />')
+  return tweetData.content.replace(/\n/g, '<br />')
+})
+
+const username = localStorage.getItem('username')
+
+const isLiked = computed(() => {
+  return tweetData.likes.includes(username)
 })
 
 const openReplyDialog = () => {
@@ -79,7 +88,6 @@ const closeDialog = () => {
 }
 
 const openCommentDialog = () => {
-  console.log('openCommentDialog')
   commentDialogVisible.value = true
 }
 
@@ -88,25 +96,50 @@ const closeCommentDialog = () => {
 }
 
 async function handleReply(replyContent) {
-  const username = localStorage.getItem('username')
-  console.log('Reply content:', replyContent)
-  console.log('tweet', props.tweet)
   const newComment:IAddCommentParams = {
-      replyPostId: props.tweet._id,
+      replyPostId: tweetData._id,
       replyTo: '',
       createdAt:  Date.now().toString(),
       username: username,
       content: replyContent,
       comments: 0,
       retweets: 0,
-      likes: 0,
+      likes: [],
       views: 0,
   }
   const res = await postStore.doAddComment(newComment)
 
   if(!res) return
   visible.value = false
+  getTweet()
 }
+
+async function doLikeTweet() {
+  const likeTweetParams:ILikeTweetParams = {
+    postId: tweetData._id,
+    username: username
+  }
+
+  if (isLiked.value) {
+    tweetData.likes = tweetData.likes.filter(like => like !== username)
+  } else {
+    tweetData.likes.push(username)
+  }
+  
+  const res = await postStore.doLikeTweet(likeTweetParams)
+  getTweet()
+}
+
+async function getTweet() {
+  const getTweetParams:IGetTweetParams = {
+    postId: tweetData._id,
+  }
+  const res = await postStore.fetchTweet(getTweetParams)
+  if (res && res.data) {
+    Object.assign(tweetData, res.data)
+  }
+}
+
 </script>
 
 <style scoped>
@@ -146,7 +179,8 @@ async function handleReply(replyContent) {
 }
 
 .tweet-image {
-  width: 100%;
+  width: 516px;
+  height: 516px;
   border-radius: 8px;
   margin: 8px 0;
 }
@@ -182,5 +216,7 @@ async function handleReply(replyContent) {
   transform: scale(0.95);
 }
 
-
+.icon-button.liked {
+  color: red;
+}
 </style>
