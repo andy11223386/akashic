@@ -1,5 +1,6 @@
+//MainContent.vue
 <template>
-  <main class="w-3/5 border-x border-gray-700 overflow-y-auto custom-scrollbar">
+  <main class="w-3/5 border-x border-gray-700 overflow-y-auto custom-scrollbar" ref="mainContent" @scroll="handleScroll">
     <div class="sticky top-0 z-10 bg-black bg-opacity-25 backdrop-filter backdrop-blur-lg">
       <div class="flex justify-between items-center px-4 py-2 border-b border-gray-700">
         <h1 class="text-2xl font-bold">Home</h1>
@@ -33,14 +34,16 @@
         </div>
       </div>
       <transition-group name="fade" tag="div">
-        <Tweet v-for="tweet in tweets" :key="tweet._id" :tweet="tweet" />
+        <div v-for="tweet in tweets" :key="tweet._id" :ref="setTweetRef" class="tweet-container">
+          <Tweet :tweet="tweet" />
+        </div>
       </transition-group>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import Tweet from '../components/Tweet.vue'
 import { IAddTweetParams, ITweet } from '../types/services/post'
 
@@ -57,12 +60,34 @@ import { useUserStore } from '../stores/user'
 const tweets = ref<Array<ITweet>>([])
 const newTweetContent = ref('')
 const imageUrl = ref('')
+const currentTweet = ref(null)
+const viewedTweet = ref([])
+const tweetRefs = ref([])
 
 const postStore = usePostStore()
 const userStore = useUserStore()
 
+const setTweetRef = el => {
+  if (el) {
+    tweetRefs.value.push(el)
+  }
+}
+
+const mainContent = ref(null)
+
 onMounted(() => {
   fetchTweets()
+  initIntersectionObserver()
+  mainContent.value.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+  if (observer) {
+    observer.disconnect()
+  }
+  if (mainContent.value) {
+    mainContent.value.removeEventListener('scroll', handleScroll)
+  }
 })
 
 async function fetchTweets() {
@@ -149,6 +174,43 @@ async function uploadImageToImgur(file: File): Promise<string | null> {
   } catch (error) {
     console.error('Imgur upload error:', error)
     return null
+  }
+}
+
+let observer
+
+function initIntersectionObserver() {
+  observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        currentTweet.value = entry.target
+      }
+    })
+  })
+
+  tweetRefs.value.forEach(ref => {
+    observer.observe(ref)
+  })
+}
+
+function handleScroll() {
+  const currentTopTweet = tweetRefs.value.find(ref => ref.getBoundingClientRect().top >= 0)
+  if (currentTopTweet) {
+    currentTweet.value = currentTopTweet
+    const tweetId = currentTopTweet.querySelector('._id').innerText
+    console.log('Current Tweet ID:', tweetId)
+    
+    // Check if the tweetId is in viewedTweet
+    const index = viewedTweet.value.indexOf(tweetId)
+    if (index === -1) {
+      // If tweetId is not in viewedTweet, push it to the end
+      viewedTweet.value.push(tweetId)
+    } else {
+      // If tweetId is already in viewedTweet, move it to the end
+      viewedTweet.value.splice(index, 1)
+      viewedTweet.value.push(tweetId)
+    }
+    console.log('Viewed Tweets:', viewedTweet.value)
   }
 }
 </script>

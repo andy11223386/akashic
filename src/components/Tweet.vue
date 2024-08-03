@@ -5,6 +5,7 @@
       <div>
         <h2 class="username">{{ tweetData.nickname || tweetData.username }}</h2>
         <p class="handle">{{ tweetData.username }}</p>
+        <p class="_id" style="display: none;">{{ tweetData._id }}</p>
       </div>
     </div>
     <p class="tweet-content" v-html="formattedContent"></p>
@@ -46,16 +47,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, defineProps, computed, watch } from 'vue'
+import { ref, reactive, defineProps, computed } from 'vue'
 import MdiComment from 'vue-material-design-icons/Comment.vue'
 import MdiReply from 'vue-material-design-icons/Reply.vue'
 import MdiRepeat from 'vue-material-design-icons/Repeat.vue'
 import MdiHeart from 'vue-material-design-icons/Heart.vue'
 import ReplyDialog from './ReplyDialog.vue'
 import CommentDialog from './CommentDialog.vue'
-import { IAddCommentParams, IGetTweetParams, ILikeTweetParams } from '../types/services/post'
+import { IAddCommentParams, ILikeTweetParams } from '../types/services/post'
 import { usePostStore } from '../stores/post'
-import { likeTweet } from '@/services/post'
 
 const postStore = usePostStore()
 
@@ -96,26 +96,26 @@ const closeCommentDialog = () => {
 }
 
 async function handleReply(replyContent) {
-  const newComment:IAddCommentParams = {
-      replyPostId: tweetData._id,
-      replyTo: '',
-      createdAt:  Date.now().toString(),
-      username: username,
-      content: replyContent,
-      comments: 0,
-      retweets: 0,
-      likes: [],
-      views: 0,
+  const newComment: IAddCommentParams = {
+    replyPostId: tweetData._id,
+    replyTo: '',
+    createdAt: Date.now().toString(),
+    username: username,
+    content: replyContent,
+    comments: 0,
+    retweets: 0,
+    likes: [],
+    views: 0,
   }
   const res = await postStore.doAddComment(newComment)
 
-  if(!res) return
+  if (!res) return
   visible.value = false
   getTweet()
 }
 
 async function doLikeTweet() {
-  const likeTweetParams:ILikeTweetParams = {
+  const likeTweetParams: ILikeTweetParams = {
     postId: tweetData._id,
     username: username
   }
@@ -125,21 +125,17 @@ async function doLikeTweet() {
   } else {
     tweetData.likes.push(username)
   }
-  
+
   const res = await postStore.doLikeTweet(likeTweetParams)
   getTweet()
 }
 
 async function getTweet() {
-  const getTweetParams:IGetTweetParams = {
-    postId: tweetData._id,
-  }
-  const res = await postStore.fetchTweet(getTweetParams)
+  const res = await postStore.fetchTweet({ postId: tweetData._id })
   if (res && res.data) {
     Object.assign(tweetData, res.data)
   }
 }
-
 </script>
 
 <style scoped>
