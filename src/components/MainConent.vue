@@ -195,7 +195,7 @@ function initIntersectionObserver() {
 
 function handleScroll() {
   const currentTopTweet = tweetRefs.value.find(ref => ref.getBoundingClientRect().top >= 0)
-  if (currentTopTweet) {
+  if (currentTopTweet && currentTweet.value !== currentTopTweet) {
     currentTweet.value = currentTopTweet
     const tweetId = currentTopTweet.querySelector('._id').innerText
     console.log('Current Tweet ID:', tweetId)
