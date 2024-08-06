@@ -11,6 +11,8 @@ import {
     ILikeTweetRes,
     IGetTweetParams,
     IGetTweetRes,
+    IGetHistoryTweetParams,
+    IGetHistoryTweetRes
 } from '../types/services/post'
 
 const BASE_ROUTE = 'api/post'
@@ -31,6 +33,11 @@ async (params: IGetTweetParams): Promise<IGetTweetRes> =>
 export const getMyTweet =
 async (params: IGetMyTweetParams): Promise<IGetMyTweetRes> =>
   await api.post(`${BASE_ROUTE}/getTweets/${params.username}`)
+
+export const getHistoryTweet =
+async (params: IGetHistoryTweetParams): Promise<IGetHistoryTweetRes> =>
+  await api.post(`${BASE_ROUTE}/getHistoryTweets`, params)
+
 
 export const addComment =
 async (params: IAddCommentParams): Promise<IAddCommentRes> =>

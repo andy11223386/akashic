@@ -45,6 +45,10 @@ export interface IGetMyTweetParams {
     username: string;
 }
 
+export interface IGetHistoryTweetParams {
+    _ids: string[];
+}
+
 export interface IGetTweetParams {
     postId: string;
 }
@@ -70,5 +74,9 @@ export declare interface ILikeTweetRes extends IBaseRes<void> {
 }
 
 export declare interface IGetTweetRes extends IBaseRes<ITweet> {
+
+}
+
+export declare interface IGetHistoryTweetRes extends IBaseRes<ITweet[]> {
 
 }

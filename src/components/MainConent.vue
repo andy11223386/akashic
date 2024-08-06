@@ -1,4 +1,3 @@
-//MainContent.vue
 <template>
   <main class="w-3/5 border-x border-gray-700 overflow-y-auto custom-scrollbar" ref="mainContent" @scroll="handleScroll">
     <div class="sticky top-0 z-10 bg-black bg-opacity-25 backdrop-filter backdrop-blur-lg">
@@ -61,7 +60,7 @@ const tweets = ref<Array<ITweet>>([])
 const newTweetContent = ref('')
 const imageUrl = ref('')
 const currentTweet = ref(null)
-const viewedTweet = ref([])
+const viewedTweet = ref<string[]>([])
 const tweetRefs = ref([])
 
 const postStore = usePostStore()
@@ -79,6 +78,13 @@ onMounted(() => {
   fetchTweets()
   initIntersectionObserver()
   mainContent.value.addEventListener('scroll', handleScroll)
+
+  // Load viewedTweet from localStorage
+  const storedViewedTweet = localStorage.getItem('viewedTweet')
+  if (storedViewedTweet) {
+    viewedTweet.value = JSON.parse(storedViewedTweet)
+  }
+  console.log('viewedTweet', viewedTweet.value)
 })
 
 onUnmounted(() => {
@@ -210,7 +216,16 @@ function handleScroll() {
       viewedTweet.value.splice(index, 1)
       viewedTweet.value.push(tweetId)
     }
+
+    // Limit viewedTweet to 50 items
+    if (viewedTweet.value.length > 50) {
+      viewedTweet.value.shift()
+    }
+
     console.log('Viewed Tweets:', viewedTweet.value)
+
+    // Save viewedTweet to localStorage
+    localStorage.setItem('viewedTweet', JSON.stringify(viewedTweet.value))
   }
 }
 </script>

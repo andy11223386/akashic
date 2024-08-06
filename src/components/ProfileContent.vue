@@ -50,8 +50,8 @@
           <div v-else-if="selectedTab === 'Highlights'" key="highlights">
 
           </div>
-          <div v-else-if="selectedTab === 'Articles'" key="articles">
-
+          <div v-else-if="selectedTab === 'Histories'" key="histories">
+            <Tweet v-for="tweet in historyTweet" :key="tweet._id" :tweet="tweet" />
           </div>
           <div v-else-if="selectedTab === 'Media'" key="media">
 
@@ -71,14 +71,16 @@ import { ref, onMounted } from 'vue'
 import Tweet from '../components/Tweet.vue'
 import MdiArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import EditProfileDialog from '../components/EditProfileDialog.vue'
-import { ITweet } from '../types/services/post'
+import { IGetHistoryTweetParams, ITweet } from '../types/services/post'
 import { usePostStore } from '../stores/post'
 import { useUserStore } from '../stores/user'
 
 const tweets = ref<Array<ITweet>>([])
+const historyTweet = ref<Array<ITweet>>([])
+const viewedTweet = ref<string[]>([])
 const postStore = usePostStore()
 const userStore = useUserStore()
-const tabs = ['Posts', 'Replies', 'Highlights', 'Articles', 'Media', 'Likes']
+const tabs = ['Posts', 'Replies', 'Highlights', 'Histories', 'Media', 'Likes']
 const selectedTab = ref('Posts')
 const showEditDialog = ref(false)
 
@@ -107,6 +109,7 @@ onMounted(() => {
 
   fetchMyTweets()
   fetchProfile()
+  fetchHistoryTweets()
 })
 
 function openEditProfile() {
@@ -117,6 +120,22 @@ function closeEditDialog() {
   showEditDialog.value = false;
   fetchProfile()
   fetchMyTweets()
+}
+
+async function fetchHistoryTweets() {
+  const storedViewedTweet = localStorage.getItem('viewedTweet')
+  if (storedViewedTweet) {
+    viewedTweet.value = JSON.parse(storedViewedTweet)
+  }
+
+  const getHistoryTweetParams: IGetHistoryTweetParams = {
+    _ids: viewedTweet.value
+  }
+  console.log('getHistoryTweet', getHistoryTweetParams)
+
+  const res = await postStore.fetchHistoryTweet(getHistoryTweetParams)
+  if (!res) return
+  historyTweet.value = res.data || []
 }
 
 async function fetchMyTweets() {

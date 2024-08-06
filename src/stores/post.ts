@@ -1,5 +1,5 @@
-import { IAddTweetParams, IGetMyTweetParams, IAddCommentParams, ILikeTweetParams, IGetTweetParams} from '@/types/services/post'
-import { addTweet, getAllTweet, getMyTweet, getTweet, addComment, likeTweet}from '@/services/post'
+import { IAddTweetParams, IAddCommentParams, ILikeTweetParams, IGetTweetParams, IGetHistoryTweetParams} from '@/types/services/post'
+import { addTweet, getAllTweet, getMyTweet, getTweet, addComment, likeTweet, getHistoryTweet}from '@/services/post'
 import { defineStore } from 'pinia'
 
 export const usePostStore = defineStore('post', {
@@ -46,6 +46,15 @@ export const usePostStore = defineStore('post', {
     async fetchTweet(params: IGetTweetParams) {
       try {
         const res = await getTweet(params)
+        console.log('res', res)
+        return res
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async fetchHistoryTweet(params: IGetHistoryTweetParams) {
+      try {
+        const res = await getHistoryTweet(params)
         console.log('res', res)
         return res
       } catch (error) {
