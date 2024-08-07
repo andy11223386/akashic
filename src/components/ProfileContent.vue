@@ -12,7 +12,7 @@
     <div>
       <div class="relative">
         <img src="https://pbs.twimg.com/profile_banners/1768877240664911872/1710601034/1500x500" alt="Banner" class="w-full">
-        <img src="https://pbs.twimg.com/profile_images/1769013911205081088/6KYJIWKf_400x400.jpg" alt="Avatar" class="avatar-img">
+        <img :src="profile.profilePicture" alt="Avatar" class="avatar-img">
       </div>
       <div class="px-4 mt-12">
         <div class="flex justify-between items-center">
@@ -91,7 +91,8 @@ const profile = ref({
   followingsCount: 0,
   followersCount: 0,
   postsCount: 0,
-  createdAt: ''
+  createdAt: '',
+  profilePicture: '',
 })
 
 onMounted(() => {
@@ -104,9 +105,11 @@ onMounted(() => {
     followingsCount: pro.followingsCount,
     followersCount: pro.followersCount,
     createdAt: pro.createdAt,
-    postsCount: 0
+    postsCount: 0,
+    profilePicture: pro.profilePicture
   }
 
+  console.log('profile.value', profile.value.profilePicture)
   fetchMyTweets()
   fetchProfile()
   fetchHistoryTweets()
@@ -145,6 +148,7 @@ async function fetchMyTweets() {
 }
 async function fetchProfile() {
   const res = await userStore.fetchProfile()
+  console.log('res', res.data)
   if (!res) return
   profile.value = {
       username: res.data.username,
@@ -153,7 +157,8 @@ async function fetchProfile() {
       followingsCount: res.data.followingsCount,
       followersCount: res.data.followersCount,
       postsCount: 0,
-      createdAt: res.data.createdAt
+      createdAt: res.data.createdAt,
+      profilePicture: res.data.profilePicture,
     };
 }
 </script>

@@ -17,6 +17,7 @@ export interface IProfile {
     followingsCount: number;
     followersCount: number;
     createdAt: string;
+    profilePicture: string;
   }
   
   export interface IGetProfileRes extends IBaseRes<IProfile>{
