@@ -206,20 +206,19 @@ function handleScroll() {
     const tweetId = currentTopTweet.querySelector('._id').innerText
     console.log('Current Tweet ID:', tweetId)
     
-    // Check if the tweetId is in viewedTweet
-    const index = viewedTweet.value.indexOf(tweetId)
+    const index = viewedTweet.value.indexOf(tweetId);
     if (index === -1) {
-      // If tweetId is not in viewedTweet, push it to the end
-      viewedTweet.value.push(tweetId)
+      // If tweetId is not in viewedTweet, unshift it to the front
+      viewedTweet.value.unshift(tweetId);
     } else {
-      // If tweetId is already in viewedTweet, move it to the end
-      viewedTweet.value.splice(index, 1)
-      viewedTweet.value.push(tweetId)
+      // If tweetId is already in viewedTweet, move it to the front
+      viewedTweet.value.splice(index, 1);
+      viewedTweet.value.unshift(tweetId);
     }
 
     // Limit viewedTweet to 50 items
     if (viewedTweet.value.length > 50) {
-      viewedTweet.value.shift()
+      viewedTweet.value.pop();
     }
 
     console.log('Viewed Tweets:', viewedTweet.value)
