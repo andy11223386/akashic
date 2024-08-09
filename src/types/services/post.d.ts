@@ -28,6 +28,11 @@ export declare interface ILikeTweetParams {
     username: string;
 }
 
+export declare interface IRetweetParams {
+    postId: string;
+    username: string;
+}
+
 export declare interface ITweet {
     _id: string;
     createdAt: string;
@@ -70,6 +75,10 @@ export declare interface IAddCommentRes extends IBaseRes<void> {
 }
 
 export declare interface ILikeTweetRes extends IBaseRes<void> {
+
+}
+
+export declare interface IRetweetRes extends IBaseRes<void> {
 
 }
 

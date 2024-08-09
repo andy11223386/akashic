@@ -1,5 +1,5 @@
 import { IAddTweetParams, IAddCommentParams, ILikeTweetParams, IGetTweetParams, IGetHistoryTweetParams} from '@/types/services/post'
-import { addTweet, getAllTweet, getMyTweet, getTweet, addComment, likeTweet, getHistoryTweet}from '@/services/post'
+import { addTweet, getAllTweet, getMyTweet, getTweet, addComment, likeTweet, getHistoryTweet, reTweet}from '@/services/post'
 import { defineStore } from 'pinia'
 
 export const usePostStore = defineStore('post', {
@@ -73,6 +73,15 @@ export const usePostStore = defineStore('post', {
     async doLikeTweet(params: ILikeTweetParams) {
       try {
         const res = await likeTweet(params)
+        console.log('res', res)
+        return res
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async doRetweet(params: ILikeTweetParams) {
+      try {
+        const res = await reTweet(params)
         console.log('res', res)
         return res
       } catch (error) {

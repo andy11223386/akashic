@@ -12,7 +12,9 @@ import {
     IGetTweetParams,
     IGetTweetRes,
     IGetHistoryTweetParams,
-    IGetHistoryTweetRes
+    IGetHistoryTweetRes,
+    IRetweetParams,
+    IRetweetRes,
 } from '../types/services/post'
 
 const BASE_ROUTE = 'api/post'
@@ -46,3 +48,7 @@ async (params: IAddCommentParams): Promise<IAddCommentRes> =>
 export const likeTweet =
 async (params: ILikeTweetParams): Promise<ILikeTweetRes> =>
   await api.post(`${BASE_ROUTE}/like`, params)
+
+export const reTweet =
+async (params: IRetweetParams): Promise<IRetweetRes> =>
+  await api.post(`${BASE_ROUTE}/retweet`, params)

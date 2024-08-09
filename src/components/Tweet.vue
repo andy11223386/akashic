@@ -15,9 +15,9 @@
         <MdiReply class="icon" />
         <span></span>
       </button>
-      <button class="icon-button">
+      <button @click="doRetweet" class="icon-button" :class="{'retweet': isRetweet}">
         <MdiRepeat class="icon" />
-        <span>{{ tweetData.retweets }}</span>
+        <span>{{ tweetData.retweets.length }}</span>
       </button>
       <button @click="openCommentDialog" class="icon-button">
         <MdiComment class="icon" />
@@ -54,7 +54,7 @@ import MdiRepeat from 'vue-material-design-icons/Repeat.vue'
 import MdiHeart from 'vue-material-design-icons/Heart.vue'
 import ReplyDialog from './ReplyDialog.vue'
 import CommentDialog from './CommentDialog.vue'
-import { IAddCommentParams, ILikeTweetParams } from '../types/services/post'
+import { IAddCommentParams, ILikeTweetParams, IRetweetParams } from '../types/services/post'
 import { usePostStore } from '../stores/post'
 
 const postStore = usePostStore()
@@ -77,6 +77,10 @@ const username = localStorage.getItem('username')
 
 const isLiked = computed(() => {
   return tweetData.likes.includes(username)
+})
+
+const isRetweet = computed(() => {
+  return tweetData.retweets.includes(username)
 })
 
 const openReplyDialog = () => {
@@ -127,6 +131,22 @@ async function doLikeTweet() {
   }
 
   const res = await postStore.doLikeTweet(likeTweetParams)
+  getTweet()
+}
+
+async function doRetweet() {
+  const retweetParams: IRetweetParams = {
+    postId: tweetData._id,
+    username: username
+  }
+
+  if (isRetweet.value) {
+    tweetData.retweets = tweetData.retweets.filter(retweet => retweet !== username)
+  } else {
+    tweetData.retweets.push(username)
+  }
+
+  const res = await postStore.doRetweet(retweetParams)
   getTweet()
 }
 
@@ -214,5 +234,9 @@ async function getTweet() {
 
 .icon-button.liked {
   color: red;
+}
+
+.icon-button.retweet {
+  color: #1da1f2;
 }
 </style>
