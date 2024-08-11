@@ -47,8 +47,8 @@
           <div v-else-if="selectedTab === 'Replies'" key="replies">
             <Tweet v-for="tweet in tweets" :key="tweet._id" :tweet="tweet" />
           </div>
-          <div v-else-if="selectedTab === 'Highlights'" key="highlights">
-
+          <div v-else-if="selectedTab === 'Retweet'" key="retweet">
+            <Tweet v-for="tweet in retweets" :key="tweet._id" :tweet="tweet" />
           </div>
           <div v-else-if="selectedTab === 'Histories'" key="histories">
             <Tweet v-for="tweet in historyTweet" :key="tweet._id" :tweet="tweet" />
@@ -77,10 +77,11 @@ import { useUserStore } from '../stores/user'
 
 const tweets = ref<Array<ITweet>>([])
 const historyTweet = ref<Array<ITweet>>([])
+const retweets = ref<Array<ITweet>>([])
 const viewedTweet = ref<string[]>([])
 const postStore = usePostStore()
 const userStore = useUserStore()
-const tabs = ['Posts', 'Replies', 'Highlights', 'Histories', 'Media', 'Likes']
+const tabs = ['Posts', 'Replies', 'Retweet', 'Histories', 'Media', 'Likes']
 const selectedTab = ref('Posts')
 const showEditDialog = ref(false)
 
@@ -113,6 +114,7 @@ onMounted(() => {
   fetchMyTweets()
   fetchProfile()
   fetchHistoryTweets()
+  fetchMyRetweet()
 })
 
 function openEditProfile() {
@@ -139,6 +141,12 @@ async function fetchHistoryTweets() {
   const res = await postStore.fetchHistoryTweet(getHistoryTweetParams)
   if (!res) return
   historyTweet.value = res.data || []
+}
+
+async function fetchMyRetweet() {
+  const res = await postStore.fetchMyRetweet()
+  if (!res) return
+  retweets.value = res.data || []
 }
 
 async function fetchMyTweets() {

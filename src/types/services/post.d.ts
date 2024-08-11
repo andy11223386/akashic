@@ -32,7 +32,6 @@ export declare interface IRetweetParams {
     postId: string;
     username: string;
 }
-
 export declare interface ITweet {
     _id: string;
     createdAt: string;
@@ -49,6 +48,11 @@ export declare interface ITweet {
 export interface IGetMyTweetParams {
     username: string;
 }
+
+export declare interface IGetMyRetweetParams {
+    username: string;
+}
+
 
 export interface IGetHistoryTweetParams {
     _ids: string[];
@@ -87,5 +91,9 @@ export declare interface IGetTweetRes extends IBaseRes<ITweet> {
 }
 
 export declare interface IGetHistoryTweetRes extends IBaseRes<ITweet[]> {
+
+}
+
+export declare interface IGetMyRetweetRes extends IBaseRes<ITweet[]> {
 
 }
