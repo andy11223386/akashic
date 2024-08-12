@@ -3,8 +3,8 @@
     <div class="tweet-header">
       <img :src="tweetData.profilePicture" class="avatar" />
       <div>
-        <h2 class="username">{{ tweetData.nickname || tweetData.username }}</h2>
-        <p class="handle">{{ tweetData.username }}</p>
+        <h2 class="username">{{ tweetData.nickname || tweetData.username }} </h2>
+        <p class="handle">{{ tweetData.username }} <span class="timestamp">{{ formattedTimestamp }}</span> </p>
         <p class="_id" style="display: none;">{{ tweetData._id }}</p>
       </div>
     </div>
@@ -74,6 +74,12 @@ const formattedContent = computed(() => {
 })
 
 const username = localStorage.getItem('username')
+
+// Format the timestamp from the tweet data
+const formattedTimestamp = computed(() => {
+  const date = new Date(tweetData.createdAt)
+  return date.toLocaleString()
+})
 
 const isLiked = computed(() => {
   return tweetData.likes.includes(username)
@@ -184,6 +190,12 @@ async function getTweet() {
 .username {
   font-size: 16px;
   font-weight: bold;
+}
+
+.timestamp {
+  font-size: 12px;
+  color: #888;
+  margin-left: 8px;
 }
 
 .handle {
