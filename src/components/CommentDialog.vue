@@ -41,10 +41,9 @@
               <div class="ml-3 flex-1">
                 <div class="flex items-center">
                   <span class="font-bold text-white text-sm">{{ comment.nickname }}</span>
-                  <!-- 樓層號 -->
-                  <span class="text-gray-500 text-xs ml-2">#{{ comment.floor }}F</span>
+                  <span class="font-bold text-white text-xs ml-2">[#{{ comment.floor }}]</span>
                   <span class="text-gray-500 text-xs ml-2">{{ comment.createdAt }}</span>
-                </div>
+                  </div>
                 <div class="mt-1 text-sm text-gray-300">
                   <p v-html="formattedContent(comment.content)" class="text-white"></p>
                 </div>
