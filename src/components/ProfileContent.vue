@@ -57,7 +57,7 @@
 
           </div>
           <div v-else-if="selectedTab === 'Likes'" key="likes">
-
+            <Tweet v-for="tweet in likeTweet" :key="tweet._id" :tweet="tweet" />
           </div>
         </transition>
       </div>
@@ -77,6 +77,7 @@ import { useUserStore } from '../stores/user'
 
 const tweets = ref<Array<ITweet>>([])
 const historyTweet = ref<Array<ITweet>>([])
+const likeTweet = ref<Array<ITweet>>([])
 const retweets = ref<Array<ITweet>>([])
 const viewedTweet = ref<string[]>([])
 const postStore = usePostStore()
