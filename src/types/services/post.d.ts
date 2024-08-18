@@ -53,6 +53,10 @@ export declare interface IGetMyRetweetParams {
     username: string;
 }
 
+export declare interface IGetMyLikeTweetParams {
+    username: string;
+}
+
 
 export interface IGetHistoryTweetParams {
     _ids: string[];
@@ -95,5 +99,8 @@ export declare interface IGetHistoryTweetRes extends IBaseRes<ITweet[]> {
 }
 
 export declare interface IGetMyRetweetRes extends IBaseRes<ITweet[]> {
+
+}
+export declare interface IGetMyLikeTweetRes extends IBaseRes<ITweet[]> {
 
 }

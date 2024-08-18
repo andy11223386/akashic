@@ -16,6 +16,8 @@ import {
     IRetweetParams,
     IRetweetRes,
     IGetMyRetweetParams,
+    IGetMyLikeTweetParams,
+    IGetMyLikeTweetRes,
 } from '../types/services/post'
 
 const BASE_ROUTE = 'api/post'
@@ -56,3 +58,7 @@ async (params: IRetweetParams): Promise<IRetweetRes> =>
 export const getMyReTweet =
 async (params: IGetMyRetweetParams): Promise<IGetMyTweetRes> =>
   await api.post(`${BASE_ROUTE}/getMyRetweet/${params.username}`)
+
+export const getMyLikeTweet =
+async (params: IGetMyLikeTweetParams): Promise<IGetMyLikeTweetRes> =>
+  await api.post(`${BASE_ROUTE}/getMyLikeTweet/${params.username}`)

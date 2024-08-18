@@ -116,6 +116,7 @@ onMounted(() => {
   fetchProfile()
   fetchHistoryTweets()
   fetchMyRetweet()
+  fetchLiketweet()
 })
 
 function openEditProfile() {
@@ -148,6 +149,12 @@ async function fetchMyRetweet() {
   const res = await postStore.fetchMyRetweet()
   if (!res) return
   retweets.value = res.data || []
+}
+
+async function fetchLiketweet() {
+  const res = await postStore.fetchMyLikeTweet()
+  if (!res) return
+  likeTweet.value = res.data || []
 }
 
 async function fetchMyTweets() {
