@@ -36,7 +36,6 @@ $http.interceptors.response.use(
   (res: AxiosResponse): any => {
     const url = res.config.url as string
     const data = res.data
-    console.log('data', data)
     return data
   },
   error => {
