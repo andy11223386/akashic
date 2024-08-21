@@ -7,7 +7,6 @@ export const usePostStore = defineStore('post', {
   actions: {
     async doAddTweet(params: IAddTweetParams) {
       try {
-        console.log('params',params)
         const res = await addTweet(params)
         console.log('res', res)
         return res

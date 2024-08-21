@@ -150,13 +150,9 @@ const autoResizeTextarea = () => {
 };
 
 const openReplyDialog = (comment) => {
-  console.log('Reply to comment:', comment);
-  // Implement logic to open reply dialog
 }
 
 const openCommentDialog = (comment) => {
-  console.log('Open comment dialog for:', comment);
-  // Implement logic to open comment dialog
 }
 </script>
 
