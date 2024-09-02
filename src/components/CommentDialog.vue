@@ -74,7 +74,7 @@
 
       <!-- Reply Section -->
       <div class="reply-section mt-4 flex items-start">
-        <img src="https://pbs.twimg.com/profile_images/1769013911205081088/6KYJIWKf_x96.jpg" alt="User Avatar" class="rounded-full w-10 h-10">
+        <img :src="myProfilePicture" alt="User Avatar" class="rounded-full w-10 h-10">
         <div class="flex-1 ml-3">
           <textarea
             v-model="replyContent"
@@ -102,8 +102,8 @@
   </div>
 </template>
 
-<script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+<script setup lang="ts">
+import { ref, defineProps, defineEmits, onMounted } from 'vue';
 import CloseIcon from 'vue-material-design-icons/Close.vue';
 import VerifiedIcon from 'vue-material-design-icons/CheckDecagram.vue';
 import ImageIcon from 'vue-material-design-icons/Image.vue';
@@ -125,6 +125,7 @@ const props = defineProps({
 const emit = defineEmits(['close', 'reply']);
 const replyContent = ref('');
 const replyTextarea = ref(null);
+const myProfilePicture = ref('');
 
 const formattedContent = (content) => {
   return content.replace(/\n/g, '<br />');
@@ -154,6 +155,14 @@ const openReplyDialog = (comment) => {
 
 const openCommentDialog = (comment) => {
 }
+
+const  getMyProfilePicture = () => {
+    const pro = JSON.parse(localStorage.getItem('profile') as string)
+    myProfilePicture.value = pro.profilePicture
+}
+
+getMyProfilePicture()
+
 </script>
 
 <style scoped>
