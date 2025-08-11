@@ -103,5 +103,15 @@ export const useUserStore = defineStore({
         console.error(error)
       }
     },
+     // ✅ 新增：依 username 取別人檔案
+    async fetchProfileByUsername(username: string) {
+      try {
+        const res = await getProfile({ username } as IGetProfileParams)
+        console.log('fetchProfileByUsername res', res)
+        return res
+      } catch (error) {
+        console.error(error)
+      }
+    },
   }
 });

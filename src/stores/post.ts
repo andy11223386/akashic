@@ -42,6 +42,38 @@ export const usePostStore = defineStore('post', {
         console.error(error)
       }
     },
+      // ✅ 新增：抓某使用者的推文列表
+    async fetchUserTweet(username: string) {
+      try {
+        const res = await getMyTweet({ username })
+        console.log('fetchUserTweet res', res)
+        return res
+      } catch (error) {
+        console.error(error)
+      }
+    },
+
+    // ✅ 新增：抓某使用者的轉推列表
+    async fetchUserRetweet(username: string) {
+      try {
+        const res = await getMyReTweet({ username })
+        console.log('fetchUserRetweet res', res)
+        return res
+      } catch (error) {
+        console.error(error)
+      }
+    },
+
+    // ✅ 新增：抓某使用者的按讚列表
+    async fetchUserLikeTweet(username: string) {
+      try {
+        const res = await getMyLikeTweet({ username })
+        console.log('fetchUserLikeTweet res', res)
+        return res
+      } catch (error) {
+        console.error(error)
+      }
+    },
     async fetchHistoryTweet(params: IGetHistoryTweetParams) {
       try {
         const res = await getHistoryTweet(params)

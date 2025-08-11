@@ -18,13 +18,22 @@ const routes = [
     name: 'Login',
     component: UserLogin,
   },
+  // ✅ 直接導向自己的使用者名稱
   {
     path: '/profile',
+    redirect: () => {
+      const me = JSON.parse(localStorage.getItem('profile') || '{}')
+      return me?.username ? `/profile/${me.username}` : '/login'
+    },
+    meta: { requiresAuth: true },
+  },
+  // ✅ 動態使用者名稱
+  {
+    path: '/profile/:username',
     name: 'Profile',
     component: Profile,
-    meta: {
-      requiresAuth: true,
-    },
+    props: true,
+    meta: { requiresAuth: true },
   },
 ];
 
