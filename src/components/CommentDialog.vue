@@ -15,7 +15,15 @@
       <div class="scrollable-content flex-grow overflow-y-auto custom-scrollbar">
         <!-- Tweet Information -->
         <div class="flex items-start mb-4">
-          <img :src="tweet.profilePicture" alt="User Avatar" class="rounded-full w-10 h-10">
+        <!-- ✅ 點推文作者頭像 -->
+            <RouterLink
+              :to="{ name: 'Profile', params: { username: tweet.username } }"
+              class="inline-block"
+              @click.stop
+              aria-label="Open profile"
+            >
+              <img :src="tweet.profilePicture" alt="User Avatar" class="rounded-full w-10 h-10 cursor-pointer">
+            </RouterLink>
           <div class="ml-3 flex-1">
             <div class="flex items-center">
               <span class="font-bold text-white text-base">{{ tweet.nickname || tweet.username }}</span>
@@ -37,7 +45,15 @@
           <h3 class="text-lg font-semibold mb-2">Comments</h3>
           <div v-for="comment in comments" :key="comment._id" class="mb-4">
             <div class="flex items-start">
-              <img :src="comment.profilePicture" alt="Commenter Avatar" class="rounded-full w-8 h-8">
+            <!-- ✅ 點留言者頭像 -->
+            <RouterLink
+              :to="{ name: 'Profile', params: { username: comment.username } }"
+              class="inline-block"
+              @click.stop
+              aria-label="Open profile"
+            >
+              <img :src="comment.profilePicture" alt="Commenter Avatar" class="rounded-full w-8 h-8 cursor-pointer">
+            </RouterLink>
               <div class="ml-3 flex-1">
                 <div class="flex items-center">
                   <span class="font-bold text-white text-sm">{{ comment.nickname || comment.username }}</span>

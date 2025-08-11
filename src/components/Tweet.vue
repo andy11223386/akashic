@@ -1,7 +1,16 @@
 <template>
   <div class="tweet-container">
     <div class="tweet-header">
-      <img :src="tweetData.profilePicture" class="avatar" />
+      <!-- ✅ 點頭像跳個人頁 -->
+      <RouterLink
+        :to="{ name: 'Profile', params: { username: tweetData.username } }"
+        class="inline-block"
+        @click.stop
+        aria-label="Open profile"
+      >
+        <img :src="tweetData.profilePicture" class="avatar cursor-pointer" :alt="`${tweetData.username}'s avatar`" />
+      </RouterLink>
+
       <div>
         <h2 class="username">{{ tweetData.nickname || tweetData.username }} </h2>
         <p class="handle">{{ tweetData.username }} <span class="timestamp">{{ formattedTimestamp }}</span> </p>
